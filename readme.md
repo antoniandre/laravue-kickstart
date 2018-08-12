@@ -2,6 +2,7 @@
 
 Steps to scaffold Laravel 5.6 with JWT authentication, register, login, logout.
 
+
 ## Create Laravel project & virtual host
 
 ```
@@ -40,10 +41,12 @@ Then reboot your Apache server.
 
 Check in the browser your project is accessible at http://laravue.test
 
+
 ## Set your environment in `.env`
 
 Create a new empty database from phpMyAdmin or terminal
 Then add the database details in .env file
+
 
 ## Fix database issue & migrate
 
@@ -65,4 +68,24 @@ After that you can migrate the user/password tables in database.
 
 ```
 php artisan migrate
+```
+
+
+## Add JWT Authentication
+
+```
+composer require tymon/jwt-auth
+```
+
+Then edit `config/app.php`:
+
+Append `Tymon\JWTAuth\Providers\LaravelServiceProvider::class` to the list of providers
+
+Append `'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,` to the list of aliases
+
+In `app/Http/Kernel.php` add this to the list of routeMiddleware:
+
+```
+  'jwt.auth' => \Tymon\JWTAuth\Middleware\GetUserFromToken::class,
+  'jwt.refresh' => \Tymon\JWTAuth\Middleware\RefreshToken::class,
 ```
