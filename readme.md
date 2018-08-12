@@ -89,3 +89,36 @@ In `app/Http/Kernel.php` add this to the list of routeMiddleware:
   'jwt.auth' => \Tymon\JWTAuth\Middleware\GetUserFromToken::class,
   'jwt.refresh' => \Tymon\JWTAuth\Middleware\RefreshToken::class,
 ```
+
+## Update User model
+
+Import JWT and add methods.
+
+```
+use Tymon\JWTAuth\Contracts\JWTSubject;
+```
+
+```
+class User extends Authenticatable implements JWTSubject
+...
+
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+```
