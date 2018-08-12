@@ -74,7 +74,7 @@ php artisan migrate
 ## Add JWT Authentication
 
 ```
-composer require tymon/jwt-auth
+composer require tymon/jwt-auth:dev-develop --prefer-source
 ```
 
 Then edit `config/app.php`:
