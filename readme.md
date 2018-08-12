@@ -45,7 +45,7 @@ Check in the browser your project is accessible at http://laravue.test
 Create a new empty database from phpMyAdmin or terminal
 Then add the database details in .env file
 
-## Fix database issue
+## Fix database issue & migrate
 
 edit App/Providers/AppServiceProvider.php:
 
@@ -59,4 +59,10 @@ In `boot()` function write:
 
 ```
 Schema::defaultStringLength(191);
+```
+
+After that you can migrate the user/password tables in database.
+
+```
+php artisan migrate
 ```
