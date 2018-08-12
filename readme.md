@@ -90,6 +90,14 @@ In `app/Http/Kernel.php` add this to the list of routeMiddleware:
   'jwt.refresh' => \Tymon\JWTAuth\Middleware\RefreshToken::class,
 ```
 
+Now to publish provider changes run:
+
+```
+php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\JWTAuthServiceProvider"
+php artisan jwt:secret
+```
+
+
 ## Update User model
 
 Import JWT and add methods.
@@ -122,3 +130,4 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 ```
+
