@@ -54,13 +54,13 @@ edit App/Providers/AppServiceProvider.php:
 
 Import Schema:
 
-```
+```php
 use Illuminate\Support\Facades\Schema;
 ```
 
 In `boot()` function write:
 
-```
+```php
 Schema::defaultStringLength(191);
 ```
 
@@ -85,7 +85,7 @@ Append `'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,` to the list of alias
 
 In `app/Http/Kernel.php` add this to the list of routeMiddleware:
 
-```
+```php
   'jwt.auth' => \Tymon\JWTAuth\Middleware\GetUserFromToken::class,
   'jwt.refresh' => \Tymon\JWTAuth\Middleware\RefreshToken::class,
 ```
@@ -106,7 +106,7 @@ Import JWT and add methods.
 use Tymon\JWTAuth\Contracts\JWTSubject;
 ```
 
-```
+```php
 class User extends Authenticatable implements JWTSubject
 ...
 
@@ -142,7 +142,7 @@ php artisan make:controller AuthController
 
 add imports:
 
-```
+```php
 use App\User;
 use Auth;
 use JWTAuth;
@@ -150,7 +150,7 @@ use JWTAuth;
 
 Fill class content:
 
-```
+```php
   public function register(RegisterFormRequest $request)
   {
       $user = new User;
@@ -214,7 +214,7 @@ php artisan make:request RegisterFormRequest
 
 Then set `authorize()` method return to true and fill in the rules:
 
-```
+```php
 return [
     'name' => 'required|string|unique:users',
     'email' => 'required|email|unique:users',
@@ -232,7 +232,7 @@ npm i --d vue-router vue-axios @websanova/vue-auth
 
 Replace content of app.js:
 
-```
+```js
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import axios from 'axios';
@@ -288,9 +288,11 @@ App.router = Vue.router
 new Vue(App).$mount('#app');
 ```
 
+## Make the front end work
+
 Create `App.vue` file
 
-```
+```html
 <template>
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -320,7 +322,7 @@ Create `App.vue` file
 
 Update `welcome.blade.php`
 
-```
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -338,4 +340,168 @@ Update `welcome.blade.php`
     <script src="/js/app.js"></script>
 </body>
 </html>
+```
+
+### Create Home.vue Vue components
+
+```
+<template>
+  <h1>Laravel 5 Vue SPA Authentication</h1>
+</template>
+```
+
+### Add Login, Register and Dashboard Vue components
+
+__`Register.vue`__
+
+```html
+<template>
+    <div>
+        <div class="alert alert-danger" v-if="error && !success">
+            <p>There was an error, unable to complete registration.</p>
+        </div>
+        <div class="alert alert-success" v-if="success">
+            <p>Registration completed. You can now <router-link :to="{name:'login'}">sign in.</router-link></p>
+        </div>
+        <form autocomplete="off" @submit.prevent="register" v-if="!success" method="post">
+            <div class="form-group" v-bind:class="{ 'has-error': error && errors.name }">
+                <label for="name">Name</label>
+                <input type="text" id="name" class="form-control" v-model="name" required>
+                <span class="help-block" v-if="error && errors.name">{{ errors.name }}</span>
+            </div>
+            <div class="form-group" v-bind:class="{ 'has-error': error && errors.email }">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" class="form-control" placeholder="user@example.com" v-model="email" required>
+                <span class="help-block" v-if="error && errors.email">{{ errors.email }}</span>
+            </div>
+            <div class="form-group" v-bind:class="{ 'has-error': error && errors.password }">
+                <label for="password">Password</label>
+                <input type="password" id="password" class="form-control" v-model="password" required>
+                <span class="help-block" v-if="error && errors.password">{{ errors.password }}</span>
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+    </div>
+</template>
+```
+
+__`login.vue`__
+
+```html
+<template>
+    <div>
+        <div class="alert alert-danger" v-if="error">
+            <p>There was an error, unable to sign in with those credentials.</p>
+        </div>
+        <form autocomplete="off" @submit.prevent="login" method="post">
+            <div class="form-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" class="form-control" placeholder="user@example.com" v-model="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" class="form-control" v-model="password" required>
+            </div>
+            <button type="submit" class="btn btn-default">Sign in</button>
+        </form>
+    </div>
+</template>
+```
+
+__`Dashboard.vue`__
+
+```html
+<template>
+    <h1>Laravel 5 – Our Cool Dashboard</h1>
+</template>
+```
+
+
+## Create api routes
+
+Add the routes in `routes/api.php`
+
+```php
+Route::post('auth/register', 'AuthController@register');
+Route::post('auth/login', 'AuthController@login');
+Route::group(['middleware' => 'jwt.auth'], function(){
+	Route::get('auth/user', 'AuthController@user');
+	Route::post('auth/logout', 'AuthController@logout');
+});
+Route::group(['middleware' => 'jwt.refresh'], function(){
+	Route::get('auth/refresh', 'AuthController@refresh');
+});
+```
+
+## Make Ajax calls to API from Front end
+
+Add axios AJAX call from `register.vue`
+
+```js
+<script>
+    export default {
+        data(){
+            return {
+                name: '',
+                email: '',
+                password: '',
+                error: false,
+                errors: {},
+                success: false
+            };
+        },
+        methods: {
+            register(){
+                var app = this
+                this.$auth.register({
+                    data: {
+                        name: app.name,
+                        email: app.email,
+                        password: app.password
+                    },
+                    success: function () {
+                        app.success = true
+                    },
+                    error: function (resp) {
+                        app.error = true;
+                        app.errors = resp.response.data.errors;
+                    },
+                    redirect: null
+                });
+            }
+        }
+    }
+</script>
+```
+
+Add axios AJAX call from `login.vue`
+
+```js
+<script>
+  export default {
+    data(){
+      return {
+        email: null,
+        password: null,
+        error: false
+      }
+    },
+    methods: {
+      login(){
+        var app = this
+        this.$auth.login({
+            params: {
+              email: app.email,
+              password: app.password
+            },
+            success: function () {},
+            error: function () {},
+            rememberMe: true,
+            redirect: '/dashboard',
+            fetchUser: true,
+        });
+      },
+    }
+  }
+</script>
 ```
