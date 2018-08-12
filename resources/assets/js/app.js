@@ -11,7 +11,7 @@ import Login from './components/Login.vue';
 Vue.use(VueRouter);
 Vue.use(VueAxios, axios);
 
-axios.defaults.baseURL = 'http://laravel.test/api';
+axios.defaults.baseURL = 'http://laravue.test/api';
 
 const router = new VueRouter({
     routes: [{

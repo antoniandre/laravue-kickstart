@@ -144,6 +144,7 @@ add imports:
 
 ```php
 use App\User;
+use App\Http\Requests\RegisterFormRequest;
 use Auth;
 use JWTAuth;
 ```
@@ -505,3 +506,5 @@ Add axios AJAX call from `login.vue`
   }
 </script>
 ```
+
+NOW RUN: `npm run watch` and enjoy your app!
