@@ -18,5 +18,10 @@
         "laravel-mix": "^2.0",
         "lodash": "^4.17.4",
         "vue": "^2.5.7"
+    },
+    "dependencies": {
+        "@websanova/vue-auth": "^2.21.14-beta",
+        "vue-axios": "^2.1.3",
+        "vue-router": "^3.0.1"
     }
 }

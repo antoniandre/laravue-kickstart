@@ -221,3 +221,11 @@ return [
     'password' => 'required|string|min:6|max:10',
 ];
 ```
+
+
+## Add front end router and authentication
+
+```
+npm install
+npm i --d vue-router vue-axios @websanova/vue-auth
+```
